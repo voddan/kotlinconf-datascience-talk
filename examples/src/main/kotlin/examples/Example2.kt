@@ -29,8 +29,10 @@ fun main(args: Array<String>) {
 
 
     // Get Count by Category
-    val countByCategory=
-            products.countBy { it.category }
+    val countByCategory = products.countBy { it.category }
+    val countByCategory2 = products.groupingBy { it.category }.eachCount()
+
+    assert(countByCategory == countByCategory2)
 
     println("Counts by Category")
     countByCategory.entries.forEach { println(it) }
@@ -41,6 +43,15 @@ fun main(args: Array<String>) {
                     keySelector = { it.category },
                     doubleSelector = { it.defectRate }
             )
+
+    val grouping = products.groupingBy { it.category }
+    val counts = grouping.eachCount()
+    val averageDefectByCategory2 = grouping
+            .fold(0.0) { sum, product -> sum + product.defectRate}
+            .mapValues { (key, sum) -> sum / counts[key]!! }
+
+    assert(averageDefectByCategory == averageDefectByCategory2)
+
 
     println("\nAverage Defect Rate by Category")
     averageDefectByCategory.entries.forEach { println(it) }
